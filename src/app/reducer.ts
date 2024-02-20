@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
+/* import type { RootState } from "./store"; */
 import { Product, type TableState } from "../lib/types";
 
 const initialState: TableState = {
@@ -24,6 +24,29 @@ export const tableSlice = createSlice({
     addItem: (state, action: PayloadAction<Product>) => {
       state.products = [...state.products, action.payload];
     },
+    deleteItem: (state, action: PayloadAction<number>) => {
+      const rowIndex = action.payload;
+      state.products = state.products.filter((_el, i) => i != rowIndex);
+    },
+    updateField: {
+      prepare(index: number, prop: string, value: string) {
+        return { payload: { index, prop, value } };
+      },
+      reducer(
+        state,
+        action: PayloadAction<{ index: number; prop: string; value: string }>
+      ) {
+        const { index, prop, value } = action.payload;
+        const shouldConvertToNumber = [
+          "discountPercentage",
+          "price",
+          "rating",
+          "stock",
+        ].includes(prop);
+        const newVal = shouldConvertToNumber ? Number(value) : value;
+        state.products[index] = { ...state.products[index], [prop]: newVal };
+      },
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -40,6 +63,6 @@ export const tableSlice = createSlice({
   },
 });
 
-export const { addItem } = tableSlice.actions;
+export const { addItem, updateField, deleteItem } = tableSlice.actions;
 
 export default tableSlice.reducer;

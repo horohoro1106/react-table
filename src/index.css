@@ -13,12 +13,11 @@
 
 .table-container {
   display: flex;
-  justify-content: center;
 }
 
 .styled-table {
   border-collapse: collapse;
-  margin: 25px 0;
+  width: 100%;
   font-size: 0.9em;
   font-family: sans-serif;
   min-width: 400px;
@@ -39,11 +38,15 @@
   text-align: center;
   border-bottom: 1px solid #ddd;
   border-right: 1px solid #ddd;
-  max-width: 300px;
+  max-width: 250px;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
   background-color: #f3f3f3;
+}
+.styled-table input {
+  max-width: 130px;
+  height: 25px;
 }
 
 /* tABLE */
@@ -94,12 +97,10 @@ button:focus-visible {
   border-radius: 8px;
   margin: 8px 12px;
 }
-.table-container {
-  display: flex;
-}
+
 .btn-delete-selected {
   max-width: 160px;
-  margin: 25px;
+  margin: 12px 0px;
   border-radius: 10px;
   background-color: red;
   color: #fff;

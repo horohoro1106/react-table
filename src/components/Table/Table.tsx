@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store";
 import {
-  ColumnDef,
   SortingState,
   flexRender,
   getCoreRowModel,
@@ -12,61 +11,18 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { Modal } from "../Modal/Modal";
-import { type Product } from "../../lib/types";
+import { COLUMNS } from "./columns";
+import { updateField } from "../../app/reducer";
 
 export function Table() {
   const dispatch = useAppDispatch();
   const data = useAppSelector((state: RootState) => state.table.products);
   const status = useAppSelector((state: RootState) => state.table.status);
-  const columns: ColumnDef<Product>[] = useMemo(function () {
-    return [
-      { header: "ID", accessorKey: "id" },
-      { header: "Title", accessorKey: "title" },
-      { header: "Brand", accessorKey: "brand" },
-      { header: "Category", accessorKey: "category" },
-      { header: "Description", accessorKey: "description" },
-      { header: "Rating", accessorKey: "rating" },
-      { header: "Stock", accessorKey: "stock" },
-      { header: "Price", accessorKey: "price" },
-      {
-        header: "Discount",
-        accessorKey: "discountPercentage",
-        cell: (info) => info.getValue() + "%",
-      },
-      {
-        header: "Sale Price",
-        accessorFn: (row) =>
-          (row.price - (row.price * row.discountPercentage) / 100).toFixed(2),
-      },
-      {
-        Header: "Delete",
-        id: "delete",
-        accessor: () => "delete",
-        cell: (tableProps) => (
-          <>
-            <span>⚙</span>
-            <span
-              style={{
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                // ES6 Syntax use the rvalue if your data is an array.
-                const dataCopy = [...data];
-                // It should not matter what you name tableProps. It made the most sense to me.
-                dataCopy.splice(tableProps.row.index, 1);
-                /* setData(dataCopy); */
-              }}
-            >
-              ❌
-            </span>
-          </>
-        ),
-      },
-    ];
-  }, []);
+  const columns = useMemo(() => COLUMNS, []);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editedRows, setEditedRows] = useState({});
   const table = useReactTable({
     columns,
     data,
@@ -78,10 +34,16 @@ export function Table() {
       sorting: sorting,
       globalFilter: filtering,
     },
+    meta: {
+      updateData: (rowIndex: number, columnId: string, value: string) => {
+        dispatch(updateField(rowIndex, columnId, value));
+      },
+      editedRows,
+      setEditedRows,
+    },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
   });
-  console.log(data);
 
   if (status === "loading") {
     return <div>Loading...</div>;
