@@ -1,0 +1,94 @@
+.tableContainer {
+  display: flex;
+}
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  border-bottom: 2px solid #009879;
+}
+
+.table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.table th,
+.table td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  max-width: 250px;
+}
+
+.table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+.table input {
+  max-width: 160px;
+  padding: 4px;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  border: 1px solid #ddd;
+}
+
+.filter {
+  padding: 8px;
+  border-radius: 12px;
+  font-size: 16px;
+  outline: none;
+  border: 4px solid #ddd;
+}
+
+.btnContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btnDefault {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #ddd;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.btnAdd {
+  margin-right: 12px;
+  background-color: #4caf50;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  margin: 8px 12px;
+}
+
+.btnDeleteSelected {
+  max-width: 160px;
+  margin: 12px 0px;
+  border-radius: 10px;
+  background-color: red;
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  padding: 0 6px;
+  font-size: 26px;
+}

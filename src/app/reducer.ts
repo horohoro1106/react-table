@@ -5,6 +5,8 @@ import { Product, type TableState } from "../lib/types";
 
 const initialState: TableState = {
   products: [],
+  revertCopy: [],
+  editedRows: {},
   status: "idle",
 };
 
@@ -28,13 +30,47 @@ export const tableSlice = createSlice({
       const rowIndex = action.payload;
       state.products = state.products.filter((_el, i) => i != rowIndex);
     },
+    editItems: (state, action: PayloadAction<number>) => {
+      state.editedRows[action.payload] = !state.editedRows[action.payload];
+    },
+    removeSelectedItems: (state, action: PayloadAction<number[]>) => {
+      state.products = state.products.filter(
+        (_el, i) => !action.payload.includes(i)
+      );
+      state.revertCopy = state.revertCopy.filter(
+        (_el, i) => !action.payload.includes(i)
+      );
+    },
+    revertItem: {
+      prepare(index: number, revert: boolean) {
+        return { payload: { index, revert } };
+      },
+      reducer(
+        state,
+        action: PayloadAction<{ index: number; revert: boolean }>
+      ) {
+        const { index, revert } = action.payload;
+        revert ///If true you revert changes in original array from revertCopy array,
+          ? (state.products = state.products.map((row, i) =>
+              i === index ? state.revertCopy[index] : row
+            ))
+          : //if false you synch changes in revertCopy row from original array
+            (state.revertCopy = state.revertCopy.map((row, i) =>
+              i === index ? state.products[index] : row
+            ));
+      },
+    },
     updateField: {
-      prepare(index: number, prop: string, value: string) {
+      prepare(index: number, prop: string, value: string | number) {
         return { payload: { index, prop, value } };
       },
       reducer(
         state,
-        action: PayloadAction<{ index: number; prop: string; value: string }>
+        action: PayloadAction<{
+          index: number;
+          prop: string;
+          value: string | number;
+        }>
       ) {
         const { index, prop, value } = action.payload;
         const shouldConvertToNumber = [
@@ -55,6 +91,7 @@ export const tableSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.products = action.payload;
+        state.revertCopy = action.payload;
         state.status = "succeeded";
       })
       .addCase(fetchProducts.rejected, (state) => {
@@ -63,6 +100,13 @@ export const tableSlice = createSlice({
   },
 });
 
-export const { addItem, updateField, deleteItem } = tableSlice.actions;
+export const {
+  addItem,
+  updateField,
+  deleteItem,
+  editItems,
+  revertItem,
+  removeSelectedItems,
+} = tableSlice.actions;
 
 export default tableSlice.reducer;

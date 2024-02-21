@@ -10,9 +10,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Modal } from "../Modal/Modal";
+import styles from "./Table.module.css";
+import { FormModal } from "../FormModal/FormModal";
 import { COLUMNS } from "./columns";
-import { updateField } from "../../app/reducer";
+import { removeSelectedItems } from "../../app/reducer";
 
 export function Table() {
   const dispatch = useAppDispatch();
@@ -22,7 +23,6 @@ export function Table() {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editedRows, setEditedRows] = useState({});
   const table = useReactTable({
     columns,
     data,
@@ -30,20 +30,22 @@ export function Table() {
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    enableRowSelection: true,
     state: {
       sorting: sorting,
       globalFilter: filtering,
     },
-    meta: {
-      updateData: (rowIndex: number, columnId: string, value: string) => {
-        dispatch(updateField(rowIndex, columnId, value));
-      },
-      editedRows,
-      setEditedRows,
-    },
     onSortingChange: setSorting,
     onGlobalFilterChange: setFiltering,
   });
+
+  const handleDeleteSelectedRows = () => {
+    const selectedRowsIndexes = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.index);
+    dispatch(removeSelectedItems(selectedRowsIndexes));
+    table.resetRowSelection();
+  };
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -55,21 +57,21 @@ export function Table() {
 
   return (
     <>
-      <Modal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
+      <FormModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
       <div>
-        <button className="btn-add" onClick={() => setIsModalOpen(true)}>
+        <button className={styles.btnAdd} onClick={() => setIsModalOpen(true)}>
           + Add new Item
         </button>
         <input
-          className="filter"
+          className={styles.filter}
           type="text"
           value={filtering}
           placeholder="Search..."
           onChange={(e) => setFiltering(e.target.value)}
         />
       </div>
-      <div className="table-container">
-        <table className="styled-table">
+      <div className={styles.tableContainer}>
+        <table className={styles.table}>
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -107,16 +109,24 @@ export function Table() {
             ))}
           </tbody>
         </table>
-        <button className="btn-delete-selected">Delete Selected</button>
+        <button
+          onClick={handleDeleteSelectedRows}
+          className={styles.btnDeleteSelected}
+        >
+          Delete Selected
+        </button>
       </div>
-      <div className="btn-container">
-        <button onClick={() => table.setPageIndex(0)} className="btn-default">
+      <div className={styles.btnContainer}>
+        <button
+          onClick={() => table.setPageIndex(0)}
+          className={styles.btnDefault}
+        >
           First page
         </button>
         <button
           disabled={!table.getCanPreviousPage()}
           onClick={() => table.previousPage()}
-          className="btn-default"
+          className={styles.btnDefault}
         >
           Previous page
         </button>
@@ -127,13 +137,13 @@ export function Table() {
         <button
           disabled={!table.getCanNextPage()}
           onClick={() => table.nextPage()}
-          className="btn-default"
+          className={styles.btnDefault}
         >
           Next page
         </button>
         <button
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          className="btn-default"
+          className={styles.btnDefault}
         >
           Last page
         </button>

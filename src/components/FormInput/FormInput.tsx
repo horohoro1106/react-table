@@ -1,7 +1,13 @@
-import { InputFieldProps } from "../../lib/types";
-import styles from "./Input.module.css";
+import { FormInputFieldProps } from "../../lib/types";
+import styles from "./FormInput.module.css";
 
-export function Input({ register, label, name, error, type }: InputFieldProps) {
+export function FormInput({
+  register,
+  label,
+  name,
+  error,
+  type,
+}: FormInputFieldProps) {
   return (
     <div className={styles.inputContainer}>
       <label className={styles.label}>{label}</label>

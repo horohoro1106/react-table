@@ -1,29 +1,57 @@
-import { useAppDispatch } from "../../app/hooks";
-import { deleteItem } from "../../app/reducer";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { deleteItem, editItems, revertItem } from "../../app/reducer";
+import { RootState } from "../../app/store";
+import { TableCellProps } from "../../lib/types";
+import styles from "./EditCell.module.css";
 
-export const EditCell = ({ row, table }) => {
+export function EditCell<TData, TValue>({
+  row,
+}: TableCellProps<TData, TValue>) {
   const dispatch = useAppDispatch();
+  const editedRows = useAppSelector(
+    (state: RootState) => state.table.editedRows
+  );
   const deleteRow = () => {
     dispatch(deleteItem(row.index));
   };
-  const meta = table.options.meta;
-  const setEditedRows = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    meta?.setEditedRows((old: []) => ({
-      ...old,
-      [row.id]: !old[row.id],
-    }));
+  const setEditedRows = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const elName = e.currentTarget.name;
+    dispatch(editItems(row.index));
+    if (elName === "cancel" || elName === "done") {
+      dispatch(revertItem(row.index, e.currentTarget.name === "cancel"));
+    }
   };
-  return meta?.editedRows[row.id] ? (
-    <>
-      <button onClick={() => 2}>X</button>{" "}
-      <button onClick={setEditedRows}>✔</button>
-    </>
+  return editedRows[row.id] ? (
+    <div className={styles.cellContainer}>
+      <button
+        className={`${styles.cellBtn} ${styles.cancel}`}
+        onClick={setEditedRows}
+        name="cancel"
+      >
+        ⚊
+      </button>
+      <button
+        className={`${styles.cellBtn} ${styles.done}`}
+        onClick={setEditedRows}
+        name="done"
+      >
+        ✔
+      </button>
+    </div>
   ) : (
-    <>
-      <button onClick={setEditedRows}>✐</button>
-      <button onClick={deleteRow}>❌</button>
-    </>
+    <div className={styles.cellContainer}>
+      <button
+        className={`${styles.cellBtn} ${styles.edit}`}
+        onClick={setEditedRows}
+      >
+        🛠
+      </button>
+      <button
+        className={`${styles.cellBtn} ${styles.remove}`}
+        onClick={deleteRow}
+      >
+        ❌
+      </button>
+    </div>
   );
-};
+}

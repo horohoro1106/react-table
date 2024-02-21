@@ -1,0 +1,28 @@
+.cellContainer {
+  display: flex;
+  justify-content: space-around;
+}
+
+.cellBtn {
+  border-radius: 8px;
+  height: 26px;
+  width: 26px;
+  border: 1px solid #ccc;
+  color: #ffb918;
+}
+
+.edit {
+  color: #ffb918;
+}
+
+.remove {
+  color: red;
+  background-color: rgb(230, 208, 208);
+}
+
+.cancel {
+  color: #7b7b7b;
+}
+.done {
+  color: #4bbd7f;
+}
