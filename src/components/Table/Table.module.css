@@ -9,28 +9,29 @@
   font-family: sans-serif;
   min-width: 400px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-  border-bottom: 2px solid #009879;
+  margin-bottom: 16px;
 }
 
 .table thead tr {
-  background-color: #009879;
-  color: #ffffff;
   text-align: left;
   cursor: pointer;
+}
+
+.table tr > *:first-child {
+  position: relative;
+}
+.table tr > *:first-child:hover {
+  color: #1976d2;
 }
 
 .table th,
 .table td {
   padding: 12px 15px;
-  text-align: center;
+  text-align: left;
   border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
   max-width: 250px;
 }
 
-.table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
 .table input {
   max-width: 160px;
   padding: 4px;
@@ -41,35 +42,53 @@
 }
 
 .filter {
+  margin-right: auto;
   padding: 8px;
   border-radius: 12px;
   font-size: 16px;
   outline: none;
   border: 4px solid #ddd;
 }
+.filter:focus {
+  border: 4px solid #1976d2;
+}
+
+.rowInfo {
+  word-spacing: 4px;
+}
 
 .btnContainer {
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: end;
+  gap: 16px;
 }
 
 .btnDefault {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
+  border-radius: 100px;
+  border: none;
+  outline: none;
+  background-color: #ddd;
+  padding: 8px 8px;
   font-weight: 500;
   font-family: inherit;
-  background-color: #ddd;
+  background-color: transparent;
   cursor: pointer;
   transition: border-color 0.25s;
+}
+.btnDefault:hover {
+  background-color: #ddd;
+  color: #1976d2;
+}
+.btnDefault:disabled:hover {
+  color: rgba(16, 16, 16, 0.3);
+  background-color: transparent;
 }
 
 .btnAdd {
   margin-right: 12px;
-  background-color: #4caf50;
+  background-color: #1976d2;
   border: none;
   cursor: pointer;
   font-weight: bold;
@@ -77,18 +96,21 @@
   color: #fff;
   padding: 10px;
   border-radius: 8px;
-  margin: 8px 12px;
+  margin: 8px;
 }
 
 .btnDeleteSelected {
   max-width: 160px;
-  margin: 12px 0px;
+  font-size: 16px;
   border-radius: 10px;
-  background-color: red;
-  color: #fff;
+  background: transparent;
+  color: #1976d2;
   font-weight: bold;
   cursor: pointer;
-  border: none;
-  padding: 0 6px;
-  font-size: 26px;
+  border: 1px solid #1976d2;
+  padding: 10px;
+}
+.btnDeleteSelected:disabled {
+  color: #ddd;
+  border: 1px solid #ddd;
 }

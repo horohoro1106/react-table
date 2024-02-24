@@ -1,5 +1,10 @@
+import FirstPageIcon from "@mui/icons-material/FirstPage";
+import LastPageIcon from "@mui/icons-material/LastPage";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import Select from "react-select";
 import { RootState } from "../../app/store";
 import {
   SortingState,
@@ -46,6 +51,12 @@ export function Table() {
     dispatch(removeSelectedItems(selectedRowsIndexes));
     table.resetRowSelection();
   };
+  const itemsPerPageOptions = [
+    { value: 5, label: "5" },
+    { value: 10, label: "10" },
+    { value: 15, label: "15" },
+    { value: 20, label: "20" },
+  ];
 
   if (status === "loading") {
     return <div>Loading...</div>;
@@ -58,10 +69,7 @@ export function Table() {
   return (
     <>
       <FormModal isOpen={isModalOpen} setIsOpen={setIsModalOpen} />
-      <div>
-        <button className={styles.btnAdd} onClick={() => setIsModalOpen(true)}>
-          + Add new Item
-        </button>
+      <div className={styles.btnContainer}>
         <input
           className={styles.filter}
           type="text"
@@ -69,83 +77,101 @@ export function Table() {
           placeholder="Search..."
           onChange={(e) => setFiltering(e.target.value)}
         />
-      </div>
-      <div className={styles.tableContainer}>
-        <table className={styles.table}>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th
-                    onClick={header.column.getToggleSortingHandler()}
-                    key={header.id}
-                  >
-                    {header.isPlaceholder ? null : (
-                      <>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        {{
-                          asc: " 🔼",
-                          desc: " 🔽",
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <button className={styles.btnAdd} onClick={() => setIsModalOpen(true)}>
+          + Add new Item
+        </button>
         <button
+          disabled={table.getSelectedRowModel().rows.length === 0}
           onClick={handleDeleteSelectedRows}
           className={styles.btnDeleteSelected}
         >
           Delete Selected
         </button>
       </div>
+      <table className={styles.table}>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  onClick={header.column.getToggleSortingHandler()}
+                  key={header.id}
+                >
+                  {header.isPlaceholder ? null : (
+                    <>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {{
+                        asc: " 🔼",
+                        desc: " 🔽",
+                      }[header.column.getIsSorted() as string] ?? null}
+                    </>
+                  )}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <div className={styles.btnContainer}>
+        Items per page
+        <Select
+          options={itemsPerPageOptions}
+          value={itemsPerPageOptions.find(
+            (option) => option.value == table.getState().pagination.pageSize
+          )}
+          onChange={(selectedOption) =>
+            selectedOption && table.setPageSize(Number(selectedOption.value))
+          }
+        />
+        <span className={styles.rowInfo}>
+          {table.getState().pagination.pageIndex *
+            table.getState().pagination.pageSize +
+            1}
+          -
+          {table.getState().pagination.pageIndex *
+            table.getState().pagination.pageSize +
+            table.getState().pagination.pageSize}{" "}
+          of {table.getCoreRowModel().rows.length}
+        </span>
         <button
           onClick={() => table.setPageIndex(0)}
           className={styles.btnDefault}
         >
-          First page
+          <FirstPageIcon fontSize="large" />
         </button>
         <button
           disabled={!table.getCanPreviousPage()}
           onClick={() => table.previousPage()}
           className={styles.btnDefault}
         >
-          Previous page
+          <NavigateBeforeIcon fontSize="large" />
         </button>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </span>
         <button
           disabled={!table.getCanNextPage()}
           onClick={() => table.nextPage()}
           className={styles.btnDefault}
         >
-          Next page
+          <NavigateNextIcon fontSize="large" />
         </button>
         <button
           onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           className={styles.btnDefault}
         >
-          Last page
+          <LastPageIcon fontSize="large" />
         </button>
       </div>
     </>

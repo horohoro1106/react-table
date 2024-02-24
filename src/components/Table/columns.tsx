@@ -2,6 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { type Product } from "../../lib/types";
 import { TableCell } from "../TableCell/TableCell";
 import { EditCell } from "../EditCell/EditCell";
+import { MyCheckbox } from "../MyCheckbox/MyCheckbox";
 
 const columnHelper = createColumnHelper<Product>();
 
@@ -10,18 +11,16 @@ export const COLUMNS = [
     id: "select",
     header(props) {
       return (
-        <input
-          type="checkbox"
-          checked={props.table.getIsAllRowsSelected()}
+        <MyCheckbox
+          isChecked={props.table.getIsAllRowsSelected()}
           onChange={props.table.getToggleAllRowsSelectedHandler()}
         />
       );
     },
     cell(props) {
       return (
-        <input
-          type="checkbox"
-          checked={props.row.getIsSelected()}
+        <MyCheckbox
+          isChecked={props.row.getIsSelected()}
           onChange={props.row.getToggleSelectedHandler()}
         />
       );
@@ -80,7 +79,7 @@ export const COLUMNS = [
     },
   }),
   columnHelper.display({
-    header: "Edit / Delete",
+    header: "Actions",
     id: "edit",
     cell: EditCell,
   }),

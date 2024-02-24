@@ -1,28 +1,20 @@
 .cellContainer {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .cellBtn {
   border-radius: 8px;
-  height: 26px;
-  width: 26px;
-  border: 1px solid #ccc;
-  color: #ffb918;
+  cursor: pointer;
+  padding: 12px 4px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+}
+.cellBtn:focus {
+  outline: none;
 }
 
-.edit {
-  color: #ffb918;
-}
-
-.remove {
-  color: red;
-  background-color: rgb(230, 208, 208);
-}
-
-.cancel {
-  color: #7b7b7b;
-}
-.done {
-  color: #4bbd7f;
+.cellBtn:hover {
+  color: #1976d2;
 }
